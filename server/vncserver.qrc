@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/vncserver">
+        <file>resource/skin/configure.png</file>
+        <file>resource/skin/exit.png</file>
+        <file>resource/skin/wovncserver.png</file>
+        <file>resource/skin/vncserver.png</file>
+        <file>resource/skin/vncserver2.png</file>
+        <file>resource/skin/eye.png</file>
+        <file>resource/skin/product.png</file>
+        <file>resource/skin/play.png</file>
+        <file>language/vncserver_en.qm</file>
+        <file>language/vncserver_zh.qm</file>
+        <file>resource/skin/reload.png</file>
+        <file>resource/skin/stop.png</file>
+        <file>resource/kblayout/default.kmap</file>
+    </qresource>
+</RCC>
