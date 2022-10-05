@@ -8,6 +8,7 @@ The main goal of this project is to provide a easy mult-platform tool.
 ## Feature
 - There is no limit on the number of users logging in at the same time.
 - Support the standard rfb3.8 protocol, support the standard raw / copyrect /hexile / trle / zrle / openh264 encoding, and expand the zrle2/trle2/trle3/zrle3 encoding to make it have a higher compression ratio.
+- Support the private screen feather.
 - Support window / linux / macosx, and android / ios in future
 
 ## WoTerm
