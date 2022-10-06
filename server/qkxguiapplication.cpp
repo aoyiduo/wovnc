@@ -29,6 +29,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QScreen>
+#include <QProcess>
 
 QKxGuiApplication::QKxGuiApplication(int &argc, char **argv)
     : QApplication(argc, argv)
@@ -128,8 +129,8 @@ void QKxGuiApplication::onLanguageSwitch()
 
 void QKxGuiApplication::onAboutToExit()
 {
-#ifdef Q_OS_WIN
     m_tray.hide();
+#ifdef Q_OS_WIN    
     if(m_capServer->isRunAsService()) {
         QtServiceController sc(SERVICE_NAME);
         if(sc.isRunning()) {
@@ -148,6 +149,33 @@ void QKxGuiApplication::onRestartApplication()
     }
 }
 
+void QKxGuiApplication::onServicePreview()
+{
+    if(m_capServer != nullptr) {
+        QString path = QCoreApplication::applicationDirPath();
+#ifdef Q_OS_WIN
+        path += "/wovncviewer.exe";
+#else
+        path += "/wovncviewer";
+#endif
+        QString pass = QKxSetting::authorizePassword();
+        quint16 port = QKxSetting::listenPort();
+        QStringList args;
+        args.append("--host=127.0.0.1");
+        args.append(QString("--port=%1").arg(port));
+        args.append(QString("--pass=%1").arg(pass));
+        args.append(QString("--viewOnly=true"));
+        QProcess* proc = new QProcess(this);
+        proc->setProgram(path);
+        proc->setArguments(args);
+        proc->start();
+        QObject::connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+        QObject::connect(proc, SIGNAL(errorOccurred(QProcess::ProcessError)), proc, SLOT(deleteLater()));
+    }else{
+        QMessageBox::information(m_dlgCfg, tr("Error"), tr("Service Not Start"));
+    }
+}
+
 QKxSystemConfig *QKxGuiApplication::get()
 {
     if(m_dlgCfg == nullptr){
@@ -160,6 +188,7 @@ QKxSystemConfig *QKxGuiApplication::get()
 void QKxGuiApplication::init()
 {
     QMenu *menu = new QMenu();
+    menu->addAction(QIcon(":/vncserver/resource/skin/connect.png"), QObject::tr("Preview"), this, SLOT(onServicePreview()));
     m_start = menu->addAction(QIcon(":/vncserver/resource/skin/play.png"), QObject::tr("Start Service"), this, SLOT(onStartService()));
     m_stop = menu->addAction(QIcon(":/vncserver/resource/skin/stop.png"), QObject::tr("Stop Service"), this, SLOT(onStopService()));
     m_stop->setVisible(false);

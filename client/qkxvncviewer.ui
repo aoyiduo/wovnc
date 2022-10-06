@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QKxVNCViewer</class>
+ <widget class="QMainWindow" name="QKxVNCViewer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
+   </property>   
+   <widget class="QMenu" name="menuServer_2">
+    <property name="title">
+     <string>Server</string>
+    </property>
+    <addaction name="actionNew"/>
+   </widget>
+   <addaction name="menuServer_2"/>
+   <addaction name="menuServer"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNew_Connection">
+   <property name="text">
+    <string>New Connection</string>
+   </property>
+  </action>
+  <action name="actionLoseless_mode">
+   <property name="text">
+    <string>Loseless mode</string>
+   </property>
+  </action>
+  <action name="actionHD_mode">
+   <property name="text">
+    <string>HD mode</string>
+   </property>
+  </action>
+  <action name="actionGereric_mode">
+   <property name="text">
+    <string>Generic mode</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New Connection</string>
+   </property>
+  </action>
+  <action name="actionStretch">
+   <property name="text">
+    <string>Stretch</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

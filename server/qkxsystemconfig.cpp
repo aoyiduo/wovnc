@@ -64,6 +64,7 @@ QKxSystemConfig::QKxSystemConfig(QWidget *parent) :
     QObject::connect(ui->btnMore, &QPushButton::clicked, this, &QKxSystemConfig::onMoreConfigure);
     QObject::connect(ui->btnStart, SIGNAL(clicked(bool)), this, SLOT(onStartService()));
     QObject::connect(ui->btnStop, SIGNAL(clicked(bool)), this, SLOT(onStopService()));
+    QObject::connect(ui->btnPreview, SIGNAL(clicked()), this, SLOT(onPreviewService()));
 
     quint32 port = QKxSetting::listenPort();
     ui->port->setText(QString("%1").arg(port));
@@ -128,6 +129,11 @@ void QKxSystemConfig::onStopService()
 {
     ui->btnStop->setEnabled(false);
     QMetaObject::invokeMethod(QKxGuiApplication::instance(), "onStopService", Qt::QueuedConnection);
+}
+
+void QKxSystemConfig::onPreviewService()
+{
+    QMetaObject::invokeMethod(QKxGuiApplication::instance(), "onServicePreview", Qt::QueuedConnection);
 }
 
 void QKxSystemConfig::onScreenChanged()

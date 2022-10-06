@@ -1,3 +1,3 @@
 #pragma once
 
-#define WOVNCSERVER_VERSION   ("3.1")
+#define WOVNCSERVER_VERSION   ("3.2.0")

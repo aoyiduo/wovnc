@@ -11,6 +11,7 @@
 
 #include "qkxmaccapture.h"
 #include "qkxvnccompress.h"
+#include "qkxdirtyframe.h"
 
 #include "qkxutils.h"
 
@@ -261,8 +262,13 @@ public:
             return 1;
         }
 
-        QRect rt;
-        if(QKxVNCCompress::findDirtyRect(pbuf, bytesPerLine, width, height, (uchar*)m_image.data(), width * 4, &rt)) {
+        QKxDirtyFrame df(width, height);
+        if(!df.findDirtyRect(pbuf, bytesPerLine, (uchar*)m_image.data(), width * 4)) {
+            return 0;
+        }
+        QList<QRect> rts = df.dirtyRects();
+        for(int i = 0; i < rts.length(); i++) {
+            QRect rt = rts.at(i);
             req->srcHeader = (uchar*)m_image.data();
             req->dstHeader = pbuf;
             req->imageSize = QSize(width, height);
@@ -280,9 +286,8 @@ public:
             src += rt.left() * 4;
 
             func(dst, bytesPerLine, src, width * 4, rt.width(), rt.height(), req);
-            return 1;
         }
-        return 0;
+        return rts.length();
     }
 };
 

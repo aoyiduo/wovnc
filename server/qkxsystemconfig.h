@@ -38,6 +38,7 @@ public slots:
     void onApplyConfig();
     void onStartService();
     void onStopService();
+    void onPreviewService();
 
     void onScreenChanged();
     void onMoreConfigure();

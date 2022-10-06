@@ -49,6 +49,7 @@ public slots:
     void onLanguageSwitch();
     void onAboutToExit();
     void onRestartApplication();
+    void onServicePreview();
 private:
     QKxSystemConfig *get();
 private:

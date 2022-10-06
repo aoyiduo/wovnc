@@ -14,6 +14,7 @@
 #include "qkxscreenlistener.h"
 #include "qkxprivacyscreen.h"
 #include "qkxvnccompress.h"
+#include "qkxdirtyframe.h"
 
 #include <Windows.h>
 #include <QImage>
@@ -400,8 +401,13 @@ public:
             func((uchar*)pbuf, bytesPerLine, (uchar*)rgbBuffer, width * 4, width, height, req);
             return 1;
         }
-        QRect rt;
-        if(QKxVNCCompress::findDirtyRect((uchar*)pbuf, bytesPerLine, width, height, (uchar*)rgbBuffer, width * 4, &rt)) {
+        QKxDirtyFrame df(width, height);
+        if(!df.findDirtyRect(pbuf, bytesPerLine, (uchar*)rgbBuffer, width * 4)) {
+            return 0;
+        }
+        QList<QRect> rts = df.dirtyRects();
+        for(int i = 0; i < rts.length(); i++) {
+            QRect rt = rts.at(i);
             req->srcHeader = rgbBuffer;
             req->dstHeader = pbuf;
             req->imageSize = QSize(width, height);
@@ -417,10 +423,9 @@ public:
             uchar *src = (uchar*)rgbBuffer;
             src += rt.top() * width * 4;
             src += rt.left() * 4;
-            func(dst, bytesPerLine, src, width * 4, rt.width(), rt.height(), req);
-            return 1;
+            func(dst, bytesPerLine, src, width * 4, rt.width(), rt.height(), req);            
         }
-        return 0;
+        return rts.length();
     }
 };
 

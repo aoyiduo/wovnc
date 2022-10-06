@@ -45,9 +45,6 @@ if(WIN32)
     set(HEADER_FILES ${HEADER_FILES}
     )
 
-    set(OTHER_FILES ${OTHER_FILES}
-        vncserver.rc
-    )
 elseif(APPLE)    
     message("APPLE Here")
     find_library(corefoundation_lib CoreFoundation REQUIRED)
@@ -116,8 +113,31 @@ link_directories(${ZLIB_ROOT_DIR}/lib
 if(WIN32)
     message("window system.")
     set(ZLIB_LIBRARY zlibstatic)
-    link_libraries(zlibstatic ws2_32 crypt32 qtservice kxcap kxutil)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        link_libraries(qtserviced)
+    else()
+        link_libraries(qtservice)
+    endif()
+    link_libraries(zlibstatic ws2_32 crypt32 kxcap kxutil)
+    set(BUILD_VERSION_MAJOR 0)
+    set(BUILD_VERSION_MINOR 0)
+    set(BUILD_VERSION_PATCH 0)
+    file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/version.h BUILD_VERSION)
+    message("buildVersion:${BUILD_VERSION}")
+    string(REGEX MATCHALL "WOVNCSERVER_VERSION.*\\(\"(.*)\"\\)" BUILD_VERSION ${BUILD_VERSION})
+    set(BUILD_VERSION ${CMAKE_MATCH_1})
+    message("versionContent:${BUILD_VERSION}")
+    string(REPLACE "." ";" VERSION_LIST ${BUILD_VERSION})
+    message("versionList:${VERSION_LIST}")
+    list(LENGTH VERSION_LIST len)
+    list(GET VERSION_LIST 0 BUILD_VERSION_MAJOR)
+    list(GET VERSION_LIST 1 BUILD_VERSION_MINOR)
+    if( ${len} EQUAL 3)
+        list(GET VERSION_LIST 2 BUILD_VERSION_PATCH)
+    endif()
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/versioninfo.rc.in versioninfo.rc @ONLY)
     add_executable(${PROJECT_NAME} WIN32 ${SOURCE_FILES} ${HEADER_FILES} ${OTHER_FILES})
+    target_sources(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/versioninfo.rc")
 elseif(APPLE)
     find_package(Threads REQUIRED)
     find_library(corefoundation_lib CoreFoundation REQUIRED)
@@ -157,6 +177,15 @@ elseif(APPLE)
         MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROGRAM_VERSION}
         MACOSX_BUNDLE_BUNDLE_NAME "WoVNCServer"
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/resource/template.plist.in
+    )
+    add_custom_command(TARGET ${PROJECT_NAME}
+        PRE_BUILD
+        COMMAND rm -f "$<TARGET_FILE_DIR:${PROJECT_NAME}>/wovncviewer"
+    )
+    add_custom_command(TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/wovncviewer"
+        COMMAND cp -f "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/wovncviewer" "$<TARGET_FILE_DIR:${PROJECT_NAME}>/wovncviewer"
     )
 else()
     set(ZLIB_LIBRARY  libz.a)

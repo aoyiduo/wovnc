@@ -13,5 +13,6 @@
         <file>resource/skin/reload.png</file>
         <file>resource/skin/stop.png</file>
         <file>resource/kblayout/default.kmap</file>
+        <file>resource/skin/connect.png</file>
     </qresource>
 </RCC>
